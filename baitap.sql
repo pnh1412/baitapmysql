@@ -4,16 +4,16 @@ MAKH char(4) PRIMARY KEY,
 HOTEN varchar(40),
 DCHI varchar(50),
 SODT varchar(20),
-NGSINH smalldatetime,
-NGDK smalldatetime,
-DOANHSO smalldatetime
+NGSINH DATE,
+NGDK DATE,
+DOANHSO DECIMAL(10,2)
 );
 
 Create Table IF NOT EXISTS NHANVIEN(
 MANV char(4) PRIMARY KEY,
 HOTEN varchar(40),
 SDT varchar(20),
-NGVL smalldatetime
+NGVL DATE
 );
 
 Create Table IF NOT EXISTS SANPHAM(
@@ -21,15 +21,15 @@ MASP char(4) PRIMARY KEY,
 TENSP varchar(40),
 DVT varchar(20),
 NUOCSX varchar(40),
-GIA money
+GIA DECIMAL(10,2)
 );
 
 Create Table IF NOT EXISTS HOADON(
 SOHD int,
-NGHD smalldatetime,
+NGHD DATE,
 MAKH varchar(50),
 MANV varchar(20),
-TRIGIA smalldatetime,
+TRIGIA DECIMAL(10,2),
 FOREIGN KEY (MAKH) REFERENCES KHACHHANG(MAKH),
 FOREIGN KEY (MANV) REFERENCES NHANVIEN(MANV)
 );
@@ -37,22 +37,20 @@ FOREIGN KEY (MANV) REFERENCES NHANVIEN(MANV)
 Create Table IF NOT EXISTS CTHD(
 SOHD int,
 MASP char(4),
-SL int,
-FOREIGN KEY (SOHD) REFERENCES HOADON(SOHD),
-FOREIGN KEY (MASP) REFERENCES SANPHAM(MASP)
+SL int
 );
 
 INSERT INTO KHACHHANG VALUES
-('KH01', 'Nguyen Van A', '731 Tran Hung Dao, Q5, TpHCM', '08823451', '1960-10-22', '13060000', '2006-07-22'),
-('KH02', 'Tran Ngoc Han', '23/5 Nguyen Trai, Q5, TpHCM', '0908256478', '1974-04-03', '280000', '2006-07-30'),
-('KH03', 'Tran Ngoc Linh', '45 Nguyen Canh Chan, Q1, TpHCM', '0938776266', '1980-06-12', '3860000', '2006-08-05'),
-('KH04', 'Tran Minh Long', '50/34 Le Dai Hanh, Q10, TpHCM', '0917325476', '1965-03-09', '250000', '2006-10-02'),
-('KH05', 'Le Nhat Minh', '34 Truong Dinh, Q3, TpHCM', '08246108', '1950-03-10', '21000', '2006-10-28'),
-('KH06', 'Le Hoai Thuong', '227 Nguyen Van Cu, Q5, TpHCM', '08631738', '1981-12-31', '915000', '2006-11-24'),
-('KH07', 'Nguyen Van Tam', '32/3 TRan binh Trong, Q5, TpHCM', '09167835665', '1971-04-06', '12500', '2006-12-01'),
-('KH08', 'Phan Thi Thanh', '45/2 An Duong Vuong, Q5, TpHCM', '0938435756', '1971-01-10', '365000', '2006-12-13'),
-('KH09', 'Le Ha Vinh', '873 Le Hong Phong, Q5, TpHCM', '08654763', '1979-09-03', '70000', '2007-01-14'),
-('KH10', 'Ha Duy Lap', '34/34B Nguyen Trai, Q1, TpHCM', '08768904', '1983-05-02', '67500', '2007-07-16');
+('KH01', 'Nguyen Van A', '731 Tran Hung Dao, Q5, TpHCM', '08823451', '1960-10-22', '2006-07-22', '13060000'),
+('KH02', 'Tran Ngoc Han', '23/5 Nguyen Trai, Q5, TpHCM', '0908256478', '1974-04-03', '2006-07-30', '280000'),
+('KH03', 'Tran Ngoc Linh', '45 Nguyen Canh Chan, Q1, TpHCM', '0938776266', '1980-06-12', '2006-08-05', '3860000'),
+('KH04', 'Tran Minh Long', '50/34 Le Dai Hanh, Q10, TpHCM', '0917325476', '1965-03-09', '2006-10-02', '250000'),
+('KH05', 'Le Nhat Minh', '34 Truong Dinh, Q3, TpHCM', '08246108', '1950-03-10', '2006-10-28', '21000'),
+('KH06', 'Le Hoai Thuong', '227 Nguyen Van Cu, Q5, TpHCM', '08631738', '1981-12-31', '2006-11-24', '915000'),
+('KH07', 'Nguyen Van Tam', '32/3 TRan binh Trong, Q5, TpHCM', '09167835665', '1971-04-06', '2006-12-01', '12500'),
+('KH08', 'Phan Thi Thanh', '45/2 An Duong Vuong, Q5, TpHCM', '0938435756', '1971-01-10', '2006-12-13', '365000'),
+('KH09', 'Le Ha Vinh', '873 Le Hong Phong, Q5, TpHCM', '08654763', '1979-09-03', '2007-01-14', '70000'),
+('KH10', 'Ha Duy Lap', '34/34B Nguyen Trai, Q1, TpHCM', '08768904', '1983-05-02', '2007-07-16', '67500');
 
 INSERT INTO NHANVIEN VALUES
 ('NV01', 'Nguyen Nhu Nhut', '0927345678', '2006-04-13'),
@@ -178,31 +176,24 @@ UPDATE KHACHHANG SET HOTEN= 'Nguyen Van Hoan' WHERE MAKH = 'KH09' AND YEAR(NGDK)
 
 -- bai tap 6
 -- tao 1 cai table de luu lai het thuoc tinh can thiet r add lai sau
-CREATE TABLE SANPHAM_TEMP (
-    MASP char(4) PRIMARY KEY,
-    TENSP varchar(40),
-    DVT varchar(20),
-    NUOCSX varchar(40),
-    GIA money,
-  	GHICHU varchar(100);
-);
-
-INSERT INTO SANPHAM_TEMP (MASP, TENSP, DVT, NUOCSX, GIA)
-SELECT MASP, TENSP, DVT, NUOCSX, GIA FROM SANPHAM;
-DROP TABLE SANPHAM;
-ALTER TABLE SANPHAM_TEMP RENAME TO SANPHAM;
-PRAGMA table_info(SANPHAM);
+ALTER TABLE SANPHAM
+MODIFY GHICHU varchar(100);
 
 -- bai tap 7
 ALTER TABLE SANPHAM
 DROP COLUMN GHICHU;
 
 -- bai tap 8
-DELETE FROM KHACHHANG WHERE strftime('%Y', NGSINH) = '1971';
+-- lien quan toi hoadon nen phai xoa trc ben hoadon moi duoc phep xoa
+DELETE FROM HOADON
+WHERE MAKH IN (SELECT MAKH FROM KHACHHANG WHERE YEAR(NGSINH) = 1971);
+DELETE FROM KHACHHANG WHERE YEAR(NGSINH) = 1971;
 SELECT * FROM KHACHHANG;
 
 -- bai tap 9
-DELETE FROM KHACHHANG WHERE strftime('%Y', NGSINH) = '1971' and strftime('%Y', NGDK) = '2006';
+DELETE FROM HOADON
+WHERE MAKH IN (SELECT MAKH FROM KHACHHANG WHERE YEAR(NGSINH) = 1971 and YEAR(NGDK) = 2006);
+DELETE FROM KHACHHANG WHERE YEAR(NGSINH) = 1971 and YEAR(NGDK) = 2006;
 SELECT * FROM KHACHHANG;
 
 -- bai tap 10
@@ -229,15 +220,15 @@ SELECT SOHD, TRIGIA FROM HOADON WHERE NGHD = '2007-01-01' OR NGHD = '2007-01-02'
 
 -- bai tap 1.7
 -- theo gia tien tu cao xuong
-SELECT SOHD, NGHD, TRIGIA FROM HOADON WHERE strftime('%Y-%m',NGHD) = '2007-01' ORDER BY TRIGIA DESC;
+SELECT SOHD, NGHD, TRIGIA FROM HOADON WHERE NGHD = '2007-01' ORDER BY TRIGIA DESC;
 -- theo ngay tu thap den ngay cuoi
-SELECT SOHD, NGHD, TRIGIA FROM HOADON WHERE strftime('%Y-%m',NGHD) = '2007-01' ORDER BY NGHD ASC;
+SELECT SOHD, NGHD, TRIGIA FROM HOADON WHERE NGHD = '2007-01' ORDER BY NGHD ASC;
 
 -- bai tap 1.8
 SELECT KHACHHANG.MAKH, KHACHHANG.HOTEN
 FROM KHACHHANG
 JOIN HOADON ON KHACHHANG.MAKH = HOADON.MAKH
-WHERE strftime('%Y-%m-%d', HOADON.NGHD) = '2007-01-01';
+WHERE HOADON.NGHD = '2007-01-01';
 
 -- bai tap 1.9
 SELECT HOADON.SOHD, HOADON.TRIGIA
@@ -252,70 +243,155 @@ JOIN CTHD ON SANPHAM.MASP = CTHD.MASP
 JOIN HOADON ON CTHD.SOHD = HOADON.SOHD
 JOIN KHACHHANG ON HOADON.MAKH = KHACHHANG.MAKH
 WHERE KHACHHANG.HOTEN = 'Tran Ngoc Linh'
-  AND strftime('%Y-%m', HOADON.NGHD) = '2006-10';
+    AND HOADON.NGHD = '2006-10';
 
 -- bai tap 2.1
--- tao 1 cai table de luu lai het thuoc tinh can thiet r add lai sau
-CREATE TABLE SANPHAM_TEMP (
-    MASP char(4) PRIMARY KEY,
-    TENSP varchar(40),
-    DVT varchar(20),
-    NUOCSX varchar(40),
-    GIA money,
-    GHICHU varchar(100);
-);
-
-INSERT INTO SANPHAM_TEMP (MASP, TENSP, DVT, NUOCSX, GIA, GHICHU)
-SELECT MASP, TENSP, DVT, NUOCSX, GIA, GHICHU FROM SANPHAM;
-DROP TABLE SANPHAM;
-ALTER TABLE SANPHAM_TEMP RENAME TO SANPHAM;
+ALTER TABLE SANPHAM
+DROP TABLE GHICHU;
 
 -- bai tap 2.2
+-- su dung trigger thay cho CHECK, vi check khong duoc ho tro rong rai
+-- bi data too long for column phai set moi duoc
+SET @@global.sql_mode= '';
+
 ALTER TABLE KHACHHANG
-ADD CONSTRAINT CheckLoaiKH
-CHECK (LOAIKH IN ('Vang lai', 'Thuong xuyen', 'Vip'));
+MODIFY LOAIKH varchar(20);
+
+DELIMITER //
+CREATE TRIGGER CheckLoaiKH
+BEFORE INSERT ON KHACHHANG
+FOR EACH ROW
+BEGIN
+    IF NEW.LOAIKH NOT IN ('Vang lai', 'Thuong xuyen', 'Vip') THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'không hợp lệ.';
+    END IF;
+END;
+//
+DELIMITER ;
+
+INSERT INTO KHACHHANG
+VALUES ('KH00', 'Nguyen Van A', '123 Duong ABC', '0123456789', '1990-01-01', '2020-01-01', 1000.50, 'Thuong xuyen');
+
 
 -- bai tap 2.3
-ALTER TABLE SANPHAM
-DROP COLUMN DVT;
-ALTER TABLE SANPHAM
-ADD DVT varchar(20) CHECK (DVT IN ('cay', 'hop', 'quyen', 'chuc', 'cai'));
+
+DELIMITER //
+CREATE TRIGGER CheckLoaiSanPham
+BEFORE INSERT ON SANPHAM
+FOR EACH ROW
+BEGIN
+    IF NEW.LOAIKH NOT IN ('cay', 'hop', 'quyen', 'chuc', 'cai') THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'không hợp lệ.';
+    END IF;
+END;
+//
+DELIMITER ;
+INSERT INTO SANPHAM VALUES ('BC10', 'But chi', 'gay', 'Dai Loan', 7000)
 
 -- bai tap 2.4
-ALTER TABLE SANPHAM
-ADD CONSTRAINT CheckGiaLonHon500
-CHECK (GIA > 500);
+
+DELIMITER //
+CREATE TRIGGER CheckGiaSanPham
+BEFORE INSERT ON SANPHAM
+FOR EACH ROW
+BEGIN
+    IF NEW.GIA < 500 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = ' không hợp lệ.';
+    END IF;
+END;
+//
+DELIMITER ;
+INSERT INTO SANPHAM VALUES ('BC11', 'But chi', 'cay', 'Dai Loan', 100)
+
 
 -- bai tap 2.5
-CREATE TRIGGER CheckSL
+DELIMITER //
+CREATE TRIGGER CheckMuaHang
 BEFORE INSERT ON HOADON
 FOR EACH ROW
 BEGIN
-    IF NEW.SL = 0 THEN
+    DECLARE totalProducts INT;
+
+    SELECT COUNT(*) INTO totalProducts FROM CTHD WHERE SOHD = NEW.SOHD;
+
+    IF totalProducts < 1 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Số lượng không thể là 0';
+        SET MESSAGE_TEXT = 'Khách hàng phải mua ít nhất 1 sản phẩm mỗi lần.';
     END IF;
 END;
+//
+DELIMITER ;
 
 -- bai tap 2.6
-ALTER TABLE KHACHHANG
-ADD CONSTRAINT CheckNamDangKy
-CHECK (NGDK <= NGSINH);
+DELIMITER //
+CREATE TRIGGER CheckNgayDangKy
+BEFORE INSERT ON KHACHHANG
+FOR EACH ROW
+BEGIN
+    IF NEW.NGDK <= NEW.NGSINH THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Ngày đăng ký phải lớn hơn ngày sinh.';
+    END IF;
+END;
+//
+DELIMITER ;
+
 
 -- bai tap 2.7
-ALTER TABLE HOADON
-ADD CONSTRAINT CheckNgayMuaHang
-CHECK (NGHD >= NGDK);
+DELIMITER //
+CREATE TRIGGER CheckNgayMuaHang
+BEFORE INSERT ON HOADON
+FOR EACH ROW
+BEGIN
+    DECLARE KH_NGDK DATE;
+
+    SELECT NGDK INTO KH_NGDK FROM KHACHHANG WHERE MAKH = NEW.MAKH;
+
+    IF NEW.NGHD < KH_NGDK THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Ngày mua hàng phải lớn hơn hoặc bằng ngày đăng ký.';
+    END IF;
+END;
+//
+DELIMITER ;
+
 
 -- bai tap 2.8
-ALTER TABLE NHANVIEN
-ADD CONSTRAINT CheckNgayBanHanhNhanVien
-CHECK (NGHD >= NGVL);
+DELIMITER //
+CREATE TRIGGER CheckNgayBanHang
+BEFORE INSERT ON HOADON
+FOR EACH ROW
+BEGIN
+    DECLARE NV_NGVL DATE;
+
+    SELECT NGVL INTO NV_NGVL FROM NHANVIEN WHERE MANV = NEW.MANV;
+
+    IF NEW.NGHD < NV_NGVL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Ngày bán hàng phải lớn hơn hoặc bằng ngày vào làm.';
+    END IF;
+END;
+//
+DELIMITER ;
+
 
 -- bai tap 2.9
-ALTER TABLE HOADON
-ADD CONSTRAINT CheckHoaDonChiTiet
-CHECK (EXISTS (SELECT 1 FROM CTHD WHERE CTHD.SOHD = HOADON.SOHD));
+DELIMITER //
+CREATE TRIGGER CheckHoaDonChiTiet
+BEFORE INSERT ON HOADON
+FOR EACH ROW
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM CTHD WHERE SOHD = NEW.SOHD) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Mỗi hóa đơn phải có ít nhất một chi tiết hóa đơn.';
+    END IF;
+END;
+//
+DELIMITER ;
+
 
 -- bai tap 2.10
 SELECT HOADON.SOHD, SUM(SANPHAM.GIA * CTHD.SL) AS TRIGIA_HOADON
